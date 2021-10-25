@@ -396,11 +396,13 @@ class BertModel(nn.Module):
         self.encoder = BERTEncoder(config)
         self.pooler = BERTPooler(config)
 
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None):
+    def forward(self, input_ids, type_ids=None, token_type_ids=None, attention_mask=None):
         if attention_mask is None:
             attention_mask = torch.ones_like(input_ids)
         if token_type_ids is None:
             token_type_ids = torch.zeros_like(input_ids)
+        if type_ids is None:
+            type_ids = torch.zeros_like(input_ids)
 
         # We create a 3D attention mask from a 2D tensor mask.
         # Sizes are [batch_size, 1, 1, to_seq_length]
@@ -417,7 +419,7 @@ class BertModel(nn.Module):
         extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
-        embedding_output = self.embeddings(input_ids, token_type_ids)
+        embedding_output = self.embeddings(input_ids, token_type_ids, type_ids)
         all_encoder_layers = self.encoder(embedding_output, extended_attention_mask)
         sequence_output = all_encoder_layers[-1]
         pooled_output = self.pooler(sequence_output)
@@ -479,8 +481,8 @@ class BertForPreTraining(nn.Module):
         self.bert = BertModel(config)
         self.cls = BertPreTrainingHeads(config, self.bert.embeddings.word_embeddings.weight)
 
-    def forward(self, input_ids, token_type_ids=None, attention_mask=None, masked_lm_labels=None, next_sentence_label=None):
-        sequence_output, pooled_output = self.bert(input_ids, token_type_ids, attention_mask,
+    def forward(self, input_ids, type_ids=None, token_type_ids=None, attention_mask=None, masked_lm_labels=None, next_sentence_label=None):
+        sequence_output, pooled_output = self.bert(input_ids, type_ids, token_type_ids, attention_mask,
                                                    output_all_encoded_layers=False)
         prediction_scores, seq_relationship_score = self.cls(sequence_output, pooled_output)
 
@@ -532,8 +534,8 @@ class BertForSequenceClassification(nn.Module):
                 module.bias.data.zero_()
         self.apply(init_weights)
 
-    def forward(self, input_ids, token_type_ids, attention_mask, labels=None):
-        _, pooled_output = self.bert(input_ids, token_type_ids, attention_mask)
+    def forward(self, input_ids, type_ids, token_type_ids, attention_mask, labels=None):
+        _, pooled_output = self.bert(input_ids, type_ids, token_type_ids, attention_mask)
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
 
@@ -583,8 +585,8 @@ class BertForQuestionAnswering(nn.Module):
                 module.bias.data.zero_()
         self.apply(init_weights)
 
-    def forward(self, input_ids, token_type_ids, attention_mask, start_positions=None, end_positions=None):
-        all_encoder_layers, _ = self.bert(input_ids, token_type_ids, attention_mask)
+    def forward(self, input_ids, type_ids, token_type_ids, attention_mask, start_positions=None, end_positions=None):
+        all_encoder_layers, _ = self.bert(input_ids, type_ids, token_type_ids, attention_mask)
         sequence_output = all_encoder_layers[-1]
         logits = self.qa_outputs(sequence_output)
         start_logits, end_logits = logits.split(1, dim=-1)
