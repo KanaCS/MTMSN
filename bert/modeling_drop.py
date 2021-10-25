@@ -390,7 +390,7 @@ class MTMSN(nn.Module):
                 module.bias.data.zero_()
         self.apply(init_weights)
 
-    def forward(self, mode, input_ids, token_type_ids, attention_mask, number_indices,
+    def forward(self, mode, input_ids, type_ids, token_type_ids, attention_mask, number_indices,
                 answer_as_span_starts=None, answer_as_span_ends=None, answer_as_span_numbers=None,
                 answer_as_counts=None, answer_as_add_sub_expressions=None, answer_as_negations=None,
                 number_indices2=None, sign_indices=None, sign_labels=None, encoded_numbers_input=None,
@@ -421,7 +421,7 @@ class MTMSN(nn.Module):
             return sign_rerank_logits
 
         elif mode == "normal":
-            all_encoder_layers, pooled_output = self.bert(input_ids, token_type_ids, attention_mask)
+            all_encoder_layers, pooled_output = self.bert(input_ids, type_ids, token_type_ids, attention_mask)
 
             passage_weights = self._passage_affine(all_encoder_layers[self.base_pos]).squeeze(-1)
             passage_vector = get_self_att_representation(all_encoder_layers[self.base_pos], passage_weights, token_type_ids)
