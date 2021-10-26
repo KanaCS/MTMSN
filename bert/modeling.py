@@ -419,7 +419,7 @@ class BertModel(nn.Module):
         extended_attention_mask = extended_attention_mask.to(dtype=next(self.parameters()).dtype) # fp16 compatibility
         extended_attention_mask = (1.0 - extended_attention_mask) * -10000.0
 
-        embedding_output = self.embeddings(input_ids, token_type_ids, type_ids)
+        embedding_output = self.embeddings(input_ids, type_ids, token_type_ids)
         all_encoder_layers = self.encoder(embedding_output, extended_attention_mask)
         sequence_output = all_encoder_layers[-1]
         pooled_output = self.pooler(sequence_output)
