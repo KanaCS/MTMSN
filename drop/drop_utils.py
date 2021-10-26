@@ -520,7 +520,6 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
     features = []
     print(len(examples))
     for (example_index, example) in tqdm(enumerate(examples)):
-        print(example_index)
         que_tok_to_orig_index = []
         que_orig_to_tok_index = []
         all_que_tokens = []
