@@ -160,7 +160,7 @@ def run_train_epoch(args, global_step, n_gpu, device, model, param_optimizer, op
         for batch_feature, batch_tensor in zip(batch_features, batch_tensors):
             if n_gpu == 1:
                 batch_tensor = tuple(t.to(device) for t in batch_tensor)  # multi-gpu does scattering it-self
-            input_ids, input_mask, segment_ids, number_indices, start_indices, end_indices, number_of_answers, \
+            type_ids, input_ids, input_mask, segment_ids, number_indices, start_indices, end_indices, number_of_answers, \
             input_counts, add_sub_expressions, negations = batch_tensor
 
             with torch.no_grad():
@@ -192,7 +192,7 @@ def run_train_epoch(args, global_step, n_gpu, device, model, param_optimizer, op
             sign_indices = sign_indices.to(device)
             sign_labels = sign_labels.to(device)
 
-            loss = model("normal", input_ids, segment_ids, input_mask, number_indices,
+            loss = model("normal", input_ids, type_ids, segment_ids, input_mask, number_indices,
                          start_indices, end_indices, number_of_answers, input_counts, add_sub_expressions, negations,
                          number_indices2, sign_indices, sign_labels)
             if n_gpu > 1:
