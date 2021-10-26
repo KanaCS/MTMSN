@@ -557,13 +557,16 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
                     # new type emb
                     if(type2id is not None): all_doc_type_ids.append(tmpptypeidx[i])
                     # new type emb
-        ###### work til hereeeeeeeeee
+        
         # The -3 accounts for [CLS], [SEP] and [SEP]
         # Truncate the passage according to the max sequence length
         max_tokens_for_doc = max_seq_length - len(all_que_tokens) - 3
         all_doc_len = len(all_doc_tokens)
         if all_doc_len > max_tokens_for_doc:
             all_doc_tokens = all_doc_tokens[:max_tokens_for_doc]
+            # new type emb
+            if(type2id is not None): all_doc_type_ids = all_doc_type_ids[:max_tokens_for_doc]
+            # new type emb
             truncate_count += 1
 
         query_tok_start_positions, query_tok_end_positions = \
@@ -582,25 +585,42 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
                 tok_number_indices.append(-1)
 
         tokens = []
+        type_ids = []
         que_token_to_orig_map = {}
         doc_token_to_orig_map = {}
         segment_ids = []
         tokens.append("[CLS]")
         segment_ids.append(0)
+        # new type emb
+        if(type2id is not None):  type_ids.append(id2type['NONE'])
+        # new type emb
         for i in range(len(all_que_tokens)):
             que_token_to_orig_map[len(tokens)] = que_tok_to_orig_index[i]
             tokens.append(all_que_tokens[i])
+            # new type emb
+            if(type2id is not None):  type_ids.append(all_que_type_ids[i])
+            # new type emb
             segment_ids.append(0)
         tokens.append("[SEP]")
         segment_ids.append(0)
-
+        # new type emb
+        if(type2id is not None):  type_ids.append(id2type['NONE'])
+        # new type emb
+        
         for i in range(len(all_doc_tokens)):
             doc_token_to_orig_map[len(tokens)] = doc_tok_to_orig_index[i]
             tokens.append(all_doc_tokens[i])
             segment_ids.append(1)
+            # new type emb
+            if(type2id is not None):  type_ids.append(all_doc_type_ids[i])
+            # new type emb
+            
         tokens.append("[SEP]")
         segment_ids.append(1)
-
+        # new type emb
+        if(type2id is not None):  type_ids.append(id2type['NONE'])
+        # new type emb
+        
         input_ids = tokenizer.convert_tokens_to_ids(tokens)
         
         # The mask has 1 for real tokens and 0 for padding tokens. Only real
