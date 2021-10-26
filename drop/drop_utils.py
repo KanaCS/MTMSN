@@ -95,7 +95,7 @@ class InputFeatures(object):
                  que_token_to_orig_map,
                  doc_token_to_orig_map,
                  input_ids,
-                 type_ids,
+                 type_ids=None,
                  input_mask,
                  segment_ids,
                  number_indices,
