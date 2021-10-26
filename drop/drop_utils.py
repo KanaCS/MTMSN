@@ -518,7 +518,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
     skip_count, truncate_count = 0, 0
 
     features = []
-    for (example_index, example) in enumerate(examples):
+    for (example_index, example) in tqdm(enumerate(examples)):
         que_tok_to_orig_index = []
         que_orig_to_tok_index = []
         all_que_tokens = []
