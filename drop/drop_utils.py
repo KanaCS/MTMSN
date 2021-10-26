@@ -608,7 +608,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         tokens.append("[SEP]")
         segment_ids.append(0)
         # new type emb
-        if(type2id is not None):  type_ids.append(id2type['NONE'])
+        if(type2id is not None):  type_ids.append(type2id['NONE'])
         # new type emb
         
         for i in range(len(all_doc_tokens)):
@@ -622,7 +622,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         tokens.append("[SEP]")
         segment_ids.append(1)
         # new type emb
-        if(type2id is not None):  type_ids.append(id2type['NONE'])
+        if(type2id is not None):  type_ids.append(type2id['NONE'])
         # new type emb
         
         input_ids = tokenizer.convert_tokens_to_ids(tokens)
