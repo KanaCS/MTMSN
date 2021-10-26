@@ -95,6 +95,7 @@ class InputFeatures(object):
                  que_token_to_orig_map,
                  doc_token_to_orig_map,
                  input_ids,
+                 type_ids,
                  input_mask,
                  segment_ids,
                  number_indices,
@@ -110,6 +111,7 @@ class InputFeatures(object):
         self.que_token_to_orig_map = que_token_to_orig_map
         self.doc_token_to_orig_map = doc_token_to_orig_map
         self.input_ids = input_ids
+        self.type_ids = type_ids
         self.input_mask = input_mask
         self.segment_ids = segment_ids
         self.number_indices = number_indices
@@ -493,8 +495,19 @@ def convert_answer_spans(spans, orig_to_tok_index, all_len, all_tokens):
             tok_end_positions.append(tok_end_position)
     return tok_start_positions, tok_end_positions
 
+def getwordtypeloc(tokens, type2id):
+    doc = nlp(' '.join(tokens))
+    locidx, s = {}, 0
+    for idx,i in enumerate(tokens):
+        locidx.update({s+c:idx for c in range(len(i)+1)})
+        s += len(i)+1
+    res = [type2id['NONE'] for i in range(len(tokens))]
+    for i in doc.entities:
+        w_s_idx, w_e_idx = locidx[i.start_char], locidx[i.end_char]
+        for wid in range(w_s_idx,w_e_idx+1): res[wid] = type2id[i.type]
+    return res
 
-def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, answering_abilities=None, logger=None):
+def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, type2id=None, answering_abilities=None, logger=None):
     """Loads a data file into a list of `InputBatch`s."""
 
     unique_id = 1000000000
@@ -505,27 +518,46 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         que_tok_to_orig_index = []
         que_orig_to_tok_index = []
         all_que_tokens = []
+        # new type emb
+        if(type2id is not None): 
+            all_que_type_ids = []
+            tmpqtypeidx = getwordtypeloc(example.question_tokens, type2id)
+        # new type emb
         for (i, token) in enumerate(example.question_tokens):
             que_orig_to_tok_index.append(len(all_que_tokens))
             sub_tokens = tokenizer.tokenize(token)
             for sub_token in sub_tokens:
                 que_tok_to_orig_index.append(i)
                 all_que_tokens.append(sub_token)
+                # new type emb
+                if(type2id is not None): all_que_type_ids.append(tmpqtypeidx[i])
+                # new type emb
 
         doc_tok_to_orig_index = []
         doc_orig_to_tok_index = []
         all_doc_tokens = []
+        # new type emb
+        if(type2id is not None): 
+            all_doc_type_ids = []
+            tmpptypeidx = getwordtypeloc(example.passage_tokens, type2id)
+        # new type emb
         for (i, token) in enumerate(example.passage_tokens):
             doc_orig_to_tok_index.append(len(all_doc_tokens))
             if i in example.number_indices:
                 doc_tok_to_orig_index.append(i)
                 all_doc_tokens.append(token)
+                # new type emb
+                if(type2id is not None): all_doc_type_ids.append(tmpptypeidx[i])
+                # new type emb
             else:
                 sub_tokens = tokenizer.tokenize(token)
                 for sub_token in sub_tokens:
                     doc_tok_to_orig_index.append(i)
                     all_doc_tokens.append(sub_token)
-
+                    # new type emb
+                    if(type2id is not None): all_doc_type_ids.append(tmpptypeidx[i])
+                    # new type emb
+        ###### work til hereeeeeeeeee
         # The -3 accounts for [CLS], [SEP] and [SEP]
         # Truncate the passage according to the max sequence length
         max_tokens_for_doc = max_seq_length - len(all_que_tokens) - 3
@@ -570,7 +602,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         segment_ids.append(1)
 
         input_ids = tokenizer.convert_tokens_to_ids(tokens)
-
+        
         # The mask has 1 for real tokens and 0 for padding tokens. Only real
         # tokens are attended to.
         input_mask = [1] * len(input_ids)
@@ -657,6 +689,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
                         que_token_to_orig_map=que_token_to_orig_map,
                         doc_token_to_orig_map=doc_token_to_orig_map,
                         input_ids=input_ids,
+                        type_ids=type_ids,
                         input_mask=input_mask,
                         segment_ids=segment_ids,
                         number_indices=number_indices,
@@ -677,6 +710,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
                 que_token_to_orig_map=que_token_to_orig_map,
                 doc_token_to_orig_map=doc_token_to_orig_map,
                 input_ids=input_ids,
+                type_ids=type_ids,
                 input_mask=input_mask,
                 segment_ids=segment_ids,
                 number_indices=number_indices))
