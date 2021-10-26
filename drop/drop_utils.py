@@ -1,4 +1,5 @@
 import json
+from tqdm import tqdm
 import copy
 import string
 import itertools
@@ -232,7 +233,7 @@ class DropReader(object):
         with open(file_path) as dataset_file:
             dataset = json.load(dataset_file)
         examples, skip_count = [], 0
-        for passage_id, passage_info in dataset.items():
+        for passage_id, passage_info in tqdm(dataset.items()):
             passage_text = passage_info["passage"]
             passage_tokens = self._tokenizer.tokenize(passage_text)
             passage_tokens = split_tokens_by_hyphen(passage_tokens)
