@@ -118,10 +118,13 @@ def read_train_data(args, tokenizer, logger):
                              max_number_of_answer=args.max_answer_number,
                              logger=logger)
     train_examples = drop_reader._read(args.train_file)
-
+    
+    type2id = json.load(open(args.type_file))
+    
     train_features = convert_examples_to_features(
         examples=train_examples,
         tokenizer=tokenizer,
+        type2id=type2id,
         max_seq_length=args.max_seq_length,
         is_train=True,
         answering_abilities=args.answering_abilities,
@@ -138,10 +141,13 @@ def read_eval_data(args, tokenizer, logger):
                              skip_when_all_empty=[],
                              logger=logger)
     eval_examples = drop_reader._read(args.predict_file)
-
+    
+    type2id = json.load(open(args.type_file))
+    
     eval_features = convert_examples_to_features(
         examples=eval_examples,
         tokenizer=tokenizer,
+        type2id=type2id,
         max_seq_length=args.max_seq_length,
         is_train=False,
         logger=logger)
