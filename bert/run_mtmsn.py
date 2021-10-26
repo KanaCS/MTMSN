@@ -264,7 +264,7 @@ def evaluate(args, model, device, eval_examples, eval_features, logger, write_pr
             logger.info("Processing example: %d" % (len(all_results)))
         batch = get_tensors(batch_feature, is_train=False)
         batch = tuple(t.to(device) for t in batch)
-        input_ids, input_mask, segment_ids, number_indices = batch
+        type_ids, input_ids, input_mask, segment_ids, number_indices = batch
         with torch.no_grad():
             output_dict = model("normal", input_ids, type_ids, segment_ids, input_mask, number_indices)
 
