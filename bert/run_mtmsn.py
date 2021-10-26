@@ -170,7 +170,7 @@ def run_train_epoch(args, global_step, n_gpu, device, model, param_optimizer, op
             input_counts, add_sub_expressions, negations = batch_tensor
 
             with torch.no_grad():
-                output_dict = model("normal", input_ids, segment_ids, input_mask, number_indices)
+                output_dict = model("normal", input_ids, type_ids, segment_ids, input_mask, number_indices)
             if len(args.answering_abilities) >= 1:
                 best_answer_ability = output_dict["best_answer_ability"]
             number_sign_logits = output_dict["number_sign_logits"]
@@ -266,7 +266,7 @@ def evaluate(args, model, device, eval_examples, eval_features, logger, write_pr
         batch = tuple(t.to(device) for t in batch)
         input_ids, input_mask, segment_ids, number_indices = batch
         with torch.no_grad():
-            output_dict = model("normal", input_ids, segment_ids, input_mask, number_indices)
+            output_dict = model("normal", input_ids, type_ids, segment_ids, input_mask, number_indices)
 
         if len(args.answering_abilities) >= 1:
             best_answer_ability = output_dict["best_answer_ability"]
@@ -311,7 +311,7 @@ def evaluate(args, model, device, eval_examples, eval_features, logger, write_pr
         sign_indices = sign_indices.to(device)
 
         with torch.no_grad():
-            sign_rerank_logits = model("rerank_inference", input_ids, segment_ids, input_mask, number_indices,
+            sign_rerank_logits = model("rerank_inference", input_ids, type_ids, segment_ids, input_mask, number_indices,
                                        number_indices2=number_indices2, sign_indices=sign_indices,
                                        encoded_numbers_input=encoded_numbers_output, passage_input=passage_output,
                                        question_input=question_output, pooled_input=pooled_output)
