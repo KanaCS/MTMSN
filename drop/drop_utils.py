@@ -1137,7 +1137,7 @@ def get_tensors(batch, is_train):
         max_add_sub_combination_len = np.array(add_sub_combination_len).max()
         max_negation_combination_len = np.array(negation_combination_len).max()
 
-    input_ids_list, input_mask_list, segment_ids_list, number_indices_list = [], [], [], []
+    input_ids_list, input_mask_list, segment_ids_list, number_indices_list, type_ids_list = [], [], [], [], []
     if is_train:
         start_indices_list, end_indices_list, number_of_answers_list, input_counts_list, add_sub_expressions_list, \
         negations_list = [], [], [], [], [], []
@@ -1145,15 +1145,18 @@ def get_tensors(batch, is_train):
         input_ids = copy.deepcopy(feature.input_ids)
         input_mask = copy.deepcopy(feature.input_mask)
         segment_ids = copy.deepcopy(feature.segment_ids)
+        type_ids = copy.deepcopy(feature.type_ids)
         # Zero-pad up to the max mini-batch sequence length.
         while len(input_ids) < max_input_len:
             input_ids.append(0)
             input_mask.append(0)
             segment_ids.append(0)
+            type_ids.append(0) #### warning: Please hard-code NONE type be 0!!
 
         input_ids_list.append(input_ids)
         input_mask_list.append(input_mask)
         segment_ids_list.append(segment_ids)
+        type_ids_list.append(type_ids)
 
         number_indices = copy.deepcopy(feature.number_indices)
         while len(number_indices) < max_number_indices_len:
@@ -1208,6 +1211,7 @@ def get_tensors(batch, is_train):
     batch_input_mask = torch.tensor(input_mask_list, dtype=torch.long)
     batch_segment_ids = torch.tensor(segment_ids_list, dtype=torch.long)
     batch_number_indices = torch.tensor(number_indices_list, dtype=torch.long)
+    batch_type_ids = torch.tensor(type_ids_list, dtype=torch.long)
 
     if is_train:
         batch_start_indices = torch.tensor(start_indices_list, dtype=torch.long)
@@ -1216,7 +1220,7 @@ def get_tensors(batch, is_train):
         batch_input_counts = torch.tensor(input_counts_list, dtype=torch.long)
         batch_add_sub_expressions = torch.tensor(add_sub_expressions_list, dtype=torch.long)
         batch_negations = torch.tensor(negations_list, dtype=torch.long)
-        return batch_input_ids, batch_input_mask, batch_segment_ids, batch_number_indices, batch_start_indices, \
+        return batch_type_ids, batch_input_ids, batch_input_mask, batch_segment_ids, batch_number_indices, batch_start_indices, \
                batch_end_indices, batch_number_of_answers, batch_input_counts, batch_add_sub_expressions, batch_negations
     else:
-        return batch_input_ids, batch_input_mask, batch_segment_ids, batch_number_indices
+        return batch_type_ids, batch_input_ids, batch_input_mask, batch_segment_ids, batch_number_indices
