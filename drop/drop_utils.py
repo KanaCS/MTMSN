@@ -636,7 +636,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
                 number_indices.append(number_index)
             else:
                 number_indices.append(-1)
-
+        if (type_ids==[]): type_ids=None
         start_indices, end_indices, add_sub_expressions, input_counts, negations, number_of_answers = [], [], [], [], [], []
         if is_train:
             # For distant supervision, we annotate the positions of all answer spans
