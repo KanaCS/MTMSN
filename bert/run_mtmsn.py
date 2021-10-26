@@ -365,6 +365,7 @@ def main():
     parser.add_argument("--max_seq_length", default=384, type=int,
                         help="The maximum total input sequence length after WordPiece tokenization. Sequences "
                              "longer than this will be truncated, and sequences shorter than this will be padded.")
+    parser.add_argument("--type_file", default=None, type=str, help="type json for training. E.g., type2id.json")
     parser.add_argument("--do_train", default=False, action='store_true', help="Whether to run training.")
     parser.add_argument("--do_predict", default=False, action='store_true', help="Whether to run eval on the dev set.")
     parser.add_argument("--train_batch_size", default=32, type=int, help="Total batch size for training.")
