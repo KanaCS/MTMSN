@@ -596,7 +596,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         tokens.append("[CLS]")
         segment_ids.append(0)
         # new type emb
-        if(type2id is not None):  type_ids.append(id2type['NONE'])
+        if(type2id is not None):  type_ids.append(type2id['NONE'])
         # new type emb
         for i in range(len(all_que_tokens)):
             que_token_to_orig_map[len(tokens)] = que_tok_to_orig_index[i]
