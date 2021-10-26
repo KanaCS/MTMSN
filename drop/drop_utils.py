@@ -23,6 +23,9 @@ from drop.w2n import word_to_num
 from drop.beam_search import beam_search
 from drop.drop_eval import (get_metrics as drop_em_and_f1, answer_json_to_strings)
 
+import stanza
+stanza.download('en')
+nlp = stanza.Pipeline('en')
 
 sign_remap = {0: 0, 1: 1, 2: -1}
 
