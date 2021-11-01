@@ -1,5 +1,7 @@
 # A Multi-Type Multi-Span Network for Reading Comprehension that Requires Discrete Reasoning
 
+The new thing compare to the original MTMSN repo is an additional input embedding layer. For training command, there is an additional arg of type_file which containing the entities type and their corresponding id.
+
 This repo contains the code of the following paper:
 
 <i> [A Multi-Type Multi-Span Network for Reading Comprehension that Requires Discrete Reasoning](https://arxiv.org/abs/1908.05514). Minghao Hu, Yuxing Peng, Zhen Huang, Dongsheng Li. EMNLP 2019.</i>
@@ -17,9 +19,10 @@ To reproduce our results, we release the following pre-trained models:
 - [MTMSN_LARGE](https://drive.google.com/open?id=1cqvaBJIG9iPIOxp5VzzUTzGknaj9Vmbo)
 
 ## Requirements
-- Python 3.6
+- Python 3.7
 - [Pytorch 1.1](https://pytorch.org/)
 - [Allennlp 0.8.4](https://allennlp.org/)
+- stanza 1.3.0 (need to change axix->dim & bool->utin8)
 
 Download the uncased [BERT-Base](https://drive.google.com/file/d/13I0Gj7v8lYhW5Hwmp5kxm3CTlzWZuok2/view?usp=sharing) model and unzip it in the current directory. 
 
@@ -81,6 +84,7 @@ python -m bert.run_mtmsn \
   --gradient_accumulation_steps 2 \
   --optimize_on_cpu \
   --output_dir out/mtmsn_large
+  --type_file type2id.json
 ```
 
 ## Acknowledgements
