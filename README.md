@@ -1,6 +1,6 @@
 # A Multi-Type Multi-Span Network for Reading Comprehension that Requires Discrete Reasoning
 
-The new thing compare to the original MTMSN repo is an additional input embedding layer. For training command, there is an additional arg of type_file which containing the entities type and their corresponding id.
+#### The new thing compare to the original MTMSN repo is an additional input embedding layer. For training command, there is an additional arg of type_file which containing the entities type and their corresponding id.
 
 This repo contains the code of the following paper:
 
