@@ -54,8 +54,9 @@ python -m bert.run_mtmsn \
   --negation \
   --gradient_accumulation_steps 2 \
   --output_dir out/mtmsn_base
+  --type_file type2id.json
 ```
-The above model was trained on a single GPU with 16GB memory. Once the training is done, you can check out the dev result in `out/mtmsn_base/performance.txt`.
+The above model was trained on a single GPU with 16GB memory. Once the training is done, you can check out the dev result in `out/mtmsn_base/performance.txt`. For the type_file, remember to make the none type entities i.e. the none entities words) to be as 0 index.
 
 To train the large model, make sure there are 4 GPUs with 16GB memory per card and run the following command:
 ```shell
