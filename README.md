@@ -85,10 +85,27 @@ python -m bert.run_mtmsn \
   --negation \
   --gradient_accumulation_steps 2 \
   --optimize_on_cpu \
-  --output_dir out/mtmsn_large
-  --type_file type2id.json
+  --output_dir out/mtmsn_large \
+  --type_file ../type2id.json
 ```
 
+Testing
+```
+python -m bert.run_mtmsn \ 
+ --vocab_file $BERT_DIR/vocab.txt  \
+ --bert_config_file $BERT_DIR/config.json  \
+ --init_checkpoint out/pretrain_split_out/model_weights.bin  \
+ --do_predict  \
+ --do_lower_case  \
+ --predict_file $DATA_DIR/drop_dataset_dev.json   \
+ --predict_batch_size 24  \
+ --span_extraction   \
+ --addition_subtraction  \
+ --counting  \
+ --negation  \
+ --output_dir out/mtmsn_base  \
+ --type_file ../type2id.json
+```
 ## Acknowledgements
 Our implementation is based on the [naqanet](https://github.com/allenai/allennlp/blob/master/allennlp/models/reading_comprehension/naqanet.py) model.
 
