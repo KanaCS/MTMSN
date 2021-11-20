@@ -501,9 +501,10 @@ def convert_answer_spans(spans, orig_to_tok_index, all_len, all_tokens):
             tok_end_positions.append(tok_end_position)
     return tok_start_positions, tok_end_positions
 
-def getwordtypeloc(qas_id, type2id):
-    doc = nerjson[qas_id]# nlp(' '.join(tokens))
+def getwordtypeloc(example, type2id):
+    doc = nerjson[example.qas_id]# nlp(' '.join(tokens))
     locidx, s = {}, 0
+    tokens = example.passage_tokens
     for idx,i in enumerate(tokens):
         locidx.update({s+c:idx for c in range(len(i)+1)})
         s += len(i)+1
@@ -528,7 +529,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         # new type emb
         if(type2id is not None): 
             all_que_type_ids = []
-            tmpqtypeidx = getwordtypeloc(example.qas_id, type2id) #example.passage_tokens
+            tmpqtypeidx = getwordtypeloc(example, type2id) #example.passage_tokens
         # new type emb
         for (i, token) in enumerate(example.question_tokens):
             que_orig_to_tok_index.append(len(all_que_tokens))
@@ -546,7 +547,7 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length, is_train, 
         # new type emb
         if(type2id is not None): 
             all_doc_type_ids = []
-            tmpptypeidx = getwordtypeloc(example.qas_id, type2id) #example.passage_tokens
+            tmpptypeidx = getwordtypeloc(example, type2id) #example.passage_tokens
         # new type emb
         for (i, token) in enumerate(example.passage_tokens):
             doc_orig_to_tok_index.append(len(all_doc_tokens))
