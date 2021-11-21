@@ -504,7 +504,7 @@ def convert_answer_spans(spans, orig_to_tok_index, all_len, all_tokens):
 def getwordtypeloc(example, type2id, qorp):
     doc = nerjson[example.qas_id]# nlp(' '.join(tokens))
     locidx, s = {}, 0
-    tokens = example.passage_tokens if qorp=='p' else example.question_tokens
+    tokens = example.passage_tokens if qorp=='passage' else example.question_tokens
     for idx,i in enumerate(tokens):
         locidx.update({s+c:idx for c in range(len(i)+1)})
         s += len(i)+1
